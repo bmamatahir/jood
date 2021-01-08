@@ -32,6 +32,7 @@ dependencies:
   firebase_storage: ^7.0.0
   #GOOGLE#
 
+  transformer_page_view:
   hooks_riverpod:
   flutter_hooks:
   rxdart:
@@ -97,6 +98,10 @@ flutter:
           weight: 700
         - asset: assets/fonts/muli/Muli-Light.ttf
           weight: 300
+    - family: Quicksand
+      fonts:
+        - asset: assets/fonts/Quicksand-Bold.ttf
+          weight: 700
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf
