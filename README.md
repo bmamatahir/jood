@@ -1,6 +1,3 @@
-# jood
+# Repo for JOOD Application, entirely built with Flutter
 
-Notre devoir de conscience
-
-## app icon
-flutter pub run flutter_launcher_icons:main
+![joodicon](images/jood.png)
