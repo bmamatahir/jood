@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "762760090127-3s65mp4n2rleiorjc121iih35jar6mm6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.jood.jood",
+            "certificate_hash": "5f8c8fee1a8d42175deda15ce18d1fbd01ef9615"
+          }
+        },
+        {
           "client_id": "762760090127-g10mvta1lg1lqlu3mpbhfgkq37akcbl9.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
