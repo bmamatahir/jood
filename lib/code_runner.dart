@@ -1,6 +1,6 @@
 class CodeRunner {
   static void run() async {
-    print(">>> CodeRunner->run()");
+    // print(">>> CodeRunner->run()");
 
 //    var manifest = HomelessManifest.random();
 //
@@ -12,6 +12,6 @@ class CodeRunner {
 //      Database().deleteHomeless(id);
 //    });
 
-    print(">>> END");
+    // print(">>> END");
   }
 }

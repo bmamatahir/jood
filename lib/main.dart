@@ -12,6 +12,7 @@ import 'package:jood/theme.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
   runApp(ProviderScope(child: MyApp()));
 }
 
@@ -36,7 +37,7 @@ class AuthenticationWrapper extends ConsumerWidget {
   Widget build(BuildContext context, ScopedReader watch) {
     return watch(userProvider).when(
       data: (user) {
-        print("\$\$firebaseUser: ${user}");
+        // print("\$\$firebaseUser: ${user}");
 
         if (user != null) {
           return HomePage();

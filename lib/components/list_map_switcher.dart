@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jood/components/elevation.dart';
 import 'package:jood/constants.dart';
 
 enum Switcher {
@@ -6,31 +7,23 @@ enum Switcher {
   map,
 }
 
-class ListMapSwitcher extends StatefulWidget {
+class ListMapSwitcher extends StatelessWidget {
   final Function(Switcher) onChange;
+  final Switcher value;
 
-  ListMapSwitcher({Key key, this.onChange}) : super(key: key);
+  ListMapSwitcher({Key key, this.onChange, this.value = Switcher.list}) : super(key: key);
 
-  @override
-  _ListMapSwitcherState createState() => _ListMapSwitcherState();
-}
-
-class _ListMapSwitcherState extends State<ListMapSwitcher> {
-  Switcher _selected = Switcher.list;
-
-  final double _borderRadius = 9.0;
+  final double _borderRadius = 0;
 
   buildButton(context) {
     return (Switcher s) {
-      Color bgc = _selected == s ? Colors.blue : Colors.transparent;
-      Color fgc = _selected == s ? Colors.white : kTextColor;
+      bool _selected = value == s;
+      Color bgc = _selected ? Colors.blue : Colors.transparent;
+      Color fgc = _selected ? Colors.white : kTextColor;
 
       return InkWell(
         onTap: () {
-          setState(() {
-            _selected = s;
-            widget.onChange(s);
-          });
+          onChange(s);
         },
         child: Container(
           padding: const EdgeInsets.all(8.0),
@@ -38,10 +31,10 @@ class _ListMapSwitcherState extends State<ListMapSwitcher> {
             color: bgc,
             borderRadius: BorderRadius.horizontal(
               left: Radius.circular(
-                _selected == Switcher.list ? _borderRadius : 0,
+                value == Switcher.list ? _borderRadius : 0,
               ),
               right: Radius.circular(
-                _selected == Switcher.map ? _borderRadius : 0,
+                value == Switcher.map ? _borderRadius : 0,
               ),
             ),
           ),
@@ -69,28 +62,28 @@ class _ListMapSwitcherState extends State<ListMapSwitcher> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 20,
-            offset: Offset(0, 5),
-          ),
-        ],
-        borderRadius: BorderRadius.circular(
-          _borderRadius,
-        ),
+    return PhysicalModel(
+      elevation: 2,
+      color: Colors.black26,
+      borderRadius: BorderRadius.circular(
+        _borderRadius,
       ),
-      child: IntrinsicHeight(
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            buildButton(context)(Switcher.list),
-            VerticalDivider(width: 1),
-            buildButton(context)(Switcher.map),
-          ],
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(
+            _borderRadius,
+          ),
+        ),
+        child: IntrinsicHeight(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              buildButton(context)(Switcher.list),
+              VerticalDivider(width: 1),
+              buildButton(context)(Switcher.map),
+            ],
+          ),
         ),
       ),
     );

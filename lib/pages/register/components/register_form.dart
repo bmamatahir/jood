@@ -13,9 +13,10 @@ class RegisterForm extends StatefulWidget {
 
 class _RegisterFormState extends State<RegisterForm> {
   final _formKey = GlobalKey<FormState>();
+  String fullName;
   String email;
   String password;
-  String conform_password;
+  // String conform_password;
   bool remember = false;
   final List<String> errors = [];
 
@@ -39,13 +40,14 @@ class _RegisterFormState extends State<RegisterForm> {
       key: _formKey,
       child: Column(
         children: [
+          buildFullNameFormField(),
+          SizedBox(height: (30)),
           buildEmailFormField(),
           SizedBox(height: (30)),
           buildPasswordFormField(),
-          SizedBox(height: (30)),
-          buildConformPassFormField(),
+          // buildConformPassFormField(),
           FormError(errors: errors),
-          SizedBox(height: (40)),
+          SizedBox(height: (30)),
           DefaultButton(
             text: "Continue",
             press: () async {
@@ -54,6 +56,7 @@ class _RegisterFormState extends State<RegisterForm> {
                 // if all are valid then go to success screen
                 try {
                   await authService.register(
+                    displayName: fullName.trim(),
                     email: email.trim(),
                     password: password.trim(),
                   );
@@ -79,40 +82,39 @@ class _RegisterFormState extends State<RegisterForm> {
     );
   }
 
-  TextFormField buildConformPassFormField() {
-    return TextFormField(
-      obscureText: true,
-      onSaved: (newValue) => conform_password = newValue,
-      onChanged: (value) {
-        if (value.isNotEmpty) {
-          removeError(error: kPassNullError);
-        } else if (value.isNotEmpty && password == conform_password) {
-          removeError(error: kMatchPassError);
-        }
-        conform_password = value;
-      },
-      validator: (value) {
-        if (value.isEmpty) {
-          addError(error: kPassNullError);
-          return "";
-        } else if ((password != value)) {
-          addError(error: kMatchPassError);
-          return "";
-        }
-        return null;
-      },
-      decoration: InputDecoration(
-        labelText: "Confirm Password",
-        hintText: "Re-enter your password",
-        // If  you are using latest version of flutter then lable text and hint text shown like this
-        // if you r using flutter less then 1.20.* then maybe this is not working properly
-        floatingLabelBehavior: FloatingLabelBehavior.always,
-        suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Lock.svg"),
-      ),
-    );
-  }
+  // TextFormField buildConformPassFormField() {
+  //   return TextFormField(
+  //     obscureText: true,
+  //     onSaved: (newValue) => conform_password = newValue,
+  //     onChanged: (value) {
+  //       if (value.isNotEmpty) {
+  //         removeError(error: kPassNullError);
+  //       } else if (value.isNotEmpty && password == conform_password) {
+  //         removeError(error: kMatchPassError);
+  //       }
+  //       conform_password = value;
+  //     },
+  //     validator: (value) {
+  //       if (value.isEmpty) {
+  //         addError(error: kPassNullError);
+  //         return "";
+  //       } else if ((password != value)) {
+  //         addError(error: kMatchPassError);
+  //         return "";
+  //       }
+  //       return null;
+  //     },
+  //     decoration: InputDecoration(
+  //       labelText: "Confirm Password",
+  //       hintText: "Re-enter your password",
+  //       // If  you are using latest version of flutter then lable text and hint text shown like this
+  //       // if you r using flutter less then 1.20.* then maybe this is not working properly
+  //       floatingLabelBehavior: FloatingLabelBehavior.always,
+  //       suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Lock.svg"),
+  //     ),
+  //   );
+  // }
 
-  //! remove initial values
   TextFormField buildPasswordFormField() {
     return TextFormField(
       obscureText: true,
@@ -138,10 +140,34 @@ class _RegisterFormState extends State<RegisterForm> {
       decoration: InputDecoration(
         labelText: "Password",
         hintText: "Enter your password",
-        // If  you are using latest version of flutter then lable text and hint text shown like this
-        // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.always,
         suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Lock.svg"),
+      ),
+    );
+  }
+
+  TextFormField buildFullNameFormField() {
+    return TextFormField(
+      keyboardType: TextInputType.text,
+      onSaved: (newValue) => fullName = newValue,
+      onChanged: (value) {
+        if (value.isNotEmpty) {
+          removeError(error: kNameNullError);
+        }
+        return null;
+      },
+      validator: (value) {
+        if (value.isEmpty) {
+          addError(error: kNameNullError);
+          return "";
+        }
+        return null;
+      },
+      decoration: InputDecoration(
+        labelText: "Full Name",
+        hintText: "Enter your full name",
+        floatingLabelBehavior: FloatingLabelBehavior.always,
+        suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/User.svg"),
       ),
     );
   }
@@ -171,8 +197,6 @@ class _RegisterFormState extends State<RegisterForm> {
       decoration: InputDecoration(
         labelText: "Email",
         hintText: "Enter your email",
-        // If  you are using latest version of flutter then lable text and hint text shown like this
-        // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.always,
         suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Mail.svg"),
       ),

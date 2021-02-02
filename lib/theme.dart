@@ -4,14 +4,18 @@ import 'constants.dart';
 
 ThemeData theme() {
   return ThemeData(
-    primaryColor: kPrimaryColor,
-//    primarySwatch: kPrimaryColor,
-    accentColor: kPrimaryColor,
+    // primaryColor: kPrimaryColor,
+    // primarySwatch: kPrimaryColor,
+    // accentColor: kPrimaryColor,
     scaffoldBackgroundColor: Colors.white,
     fontFamily: "Muli",
     appBarTheme: appBarTheme(),
     textTheme: textTheme(),
     inputDecorationTheme: inputDecorationTheme(),
+    popupMenuTheme: PopupMenuThemeData(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
+      elevation: 2,
+    ),
     visualDensity: VisualDensity.adaptivePlatformDensity,
   );
 }

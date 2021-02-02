@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:flutter_twitter_login/flutter_twitter_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:jood/constants.dart';
+import 'package:jood/models/profile.dart';
 import 'package:rxdart/rxdart.dart';
 
 class AuthenticationService {
@@ -14,20 +12,27 @@ class AuthenticationService {
 
   AuthenticationService() {
     user = _auth.idTokenChanges();
-    profile = user.switchMap((User user) {
-      if (user != null)
+
+    user.switchMap((User user) {
+      if (user != null) {
         return _db
             .collection("users")
             .doc(user.uid)
             .snapshots()
-            .map((s) => s.data());
-      else
-        return Stream.value({});
+            .map((s) => Profile.fromSnapshot(s));
+      } else
+        return Stream.value(Profile.none());
+    }).listen((p) {
+      profile.add(p);
     });
   }
 
+
+  Profile get userInfo => profile.value;
+
   Stream<User> user;
-  Stream<Map<String, dynamic>> profile;
+
+  final profile = BehaviorSubject<Profile>.seeded(Profile.none());
 
   Future<void> signOut() async {
     await _auth.signOut();
@@ -37,9 +42,12 @@ class AuthenticationService {
     await _auth.signInWithEmailAndPassword(email: email, password: password);
   }
 
-  Future<String> register({String email, String password}) async {
-    await _auth.createUserWithEmailAndPassword(
-        email: email, password: password);
+  Future<String> register({String displayName, String email, String password}) async {
+    loading.add(true);
+    UserCredential userCredentials =
+        await _auth.createUserWithEmailAndPassword(email: email, password: password);
+    updateUserData(userCredentials.user, displayName: displayName);
+    loading.add(false);
   }
 
   Future<UserCredential> signInWithGoogle() async {
@@ -49,8 +57,7 @@ class AuthenticationService {
     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
 
     // Obtain the auth details from the request
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
     // Create a new credential
     final GoogleAuthCredential credential = GoogleAuthProvider.credential(
@@ -59,56 +66,53 @@ class AuthenticationService {
     );
 
     // Once signed in, return the UserCredential
-    UserCredential userCredentials =
-        await FirebaseAuth.instance.signInWithCredential(credential);
-
-    print("✨ Signed In: ${userCredentials.user.displayName}");
+    UserCredential userCredentials = await FirebaseAuth.instance.signInWithCredential(credential);
 
     updateUserData(userCredentials.user);
     loading.add(false);
   }
 
-  Future<UserCredential> signInWithFacebook() async {
-    // Trigger the sign-in flow
-    final AccessToken accessToken = await FacebookAuth.instance.login();
+  // Future<UserCredential> signInWithFacebook() async {
+  //   // Trigger the sign-in flow
+  //   final AccessToken accessToken = await FacebookAuth.instance.login();
+  //
+  //   // Create a credential from the access token
+  //   final FacebookAuthCredential facebookAuthCredential =
+  //       FacebookAuthProvider.credential(accessToken.token);
+  //
+  //   // Once signed in, return the UserCredential
+  //   return await FirebaseAuth.instance
+  //       .signInWithCredential(facebookAuthCredential);
+  // }
 
-    // Create a credential from the access token
-    final FacebookAuthCredential facebookAuthCredential =
-        FacebookAuthProvider.credential(accessToken.token);
+  // Future<UserCredential> signInWithTwitter() async {
+  //   // Create a TwitterLogin instance
+  //   final TwitterLogin twitterLogin = new TwitterLogin(
+  //     consumerKey: TWITTER_CONSUMER_KEY,
+  //     consumerSecret: TWITTER_CONSUMER_SECRET,
+  //   );
+  //
+  //   // Trigger the sign-in flow
+  //   final TwitterLoginResult loginResult = await twitterLogin.authorize();
+  //
+  //   // Get the Logged In session
+  //   final TwitterSession twitterSession = loginResult.session;
+  //
+  //   // Create a credential from the access token
+  //   final AuthCredential twitterAuthCredential = TwitterAuthProvider.credential(
+  //       accessToken: twitterSession.token, secret: twitterSession.secret);
+  //
+  //   // Once signed in, return the UserCredential
+  //   return await FirebaseAuth.instance
+  //       .signInWithCredential(twitterAuthCredential);
+  // }
 
-    // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance
-        .signInWithCredential(facebookAuthCredential);
-  }
-
-  Future<UserCredential> signInWithTwitter() async {
-    // Create a TwitterLogin instance
-    final TwitterLogin twitterLogin = new TwitterLogin(
-      consumerKey: TWITTER_CONSUMER_KEY,
-      consumerSecret: TWITTER_CONSUMER_SECRET,
-    );
-
-    // Trigger the sign-in flow
-    final TwitterLoginResult loginResult = await twitterLogin.authorize();
-
-    // Get the Logged In session
-    final TwitterSession twitterSession = loginResult.session;
-
-    // Create a credential from the access token
-    final AuthCredential twitterAuthCredential = TwitterAuthProvider.credential(
-        accessToken: twitterSession.token, secret: twitterSession.secret);
-
-    // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance
-        .signInWithCredential(twitterAuthCredential);
-  }
-
-  Future updateUserData(User user) {
+  Future updateUserData(User user, {String displayName}) {
     DocumentReference ref = _db.collection("users").doc(user.uid);
     return ref.set({
       "uid": user.uid,
       "email": user.email,
-      "displayName": user.displayName,
+      "displayName": displayName ?? user.displayName,
       "photoURL": user.photoURL,
       "lastSeen": DateTime.now(),
     });

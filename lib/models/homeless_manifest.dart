@@ -2,15 +2,12 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:faker/faker.dart';
+import 'package:jood/helper/helpers.dart';
+import 'package:jood/models/profile.dart';
 
 class HomelessManifest {
   static const List<String> GENDERS = ["Male", "Female"];
-  static const List<String> LIFE_STAGES = [
-    "Child",
-    "Adolescence",
-    "Adult",
-    "OldAge"
-  ];
+  static const List<String> LIFE_STAGES = ["Child", "Adolescence", "Adult", "OldAge"];
   static const List<String> GLOBAL_NEEDS = [
     'Nourriture',
     'Vêtements',
@@ -43,6 +40,11 @@ class HomelessManifest {
   FamilyRegistry familyRegistry;
   List<String> physicalAppearance;
   List<String> psychologicalState;
+  String reporterId;
+  DateTime createdAt;
+  Profile reporter;
+
+  String get timeAgo => createdAt != null ? Helpers.formatTimeAgo(createdAt) : null;
 
   var _faker = Faker();
 
@@ -56,8 +58,7 @@ class HomelessManifest {
 
     List<T> _randomElements<T>(List<T> list) {
       return _faker.randomGenerator
-          .numbers(
-              list.length - 1, _faker.randomGenerator.integer(list.length - 1))
+          .numbers(list.length - 1, _faker.randomGenerator.integer(list.length - 1))
           .map((position) => list[position])
           .toList();
     }
@@ -65,6 +66,7 @@ class HomelessManifest {
     globalNeeds = _randomElements(GLOBAL_NEEDS);
     physicalAppearance = _randomElements(PHYSICAL_APPEARANCE);
     psychologicalState = _randomElements(PSYCHOLOGICAL_STATE);
+    reporterId = _faker.randomGenerator.string(50, min: 25);
   }
 
   HomelessManifest(
@@ -74,14 +76,14 @@ class HomelessManifest {
       this.psychologicalState});
 
   HomelessManifest.fromJson(Map<String, dynamic> json) {
-    id = json['uid'];
     globalNeeds = json['globalNeeds'].cast<String>();
     familyRegistry = json['familyRegistry'] != null
-        ? new FamilyRegistry.fromJson(
-            Map<String, dynamic>.from(json['familyRegistry']))
+        ? new FamilyRegistry.fromJson(Map<String, dynamic>.from(json['familyRegistry']))
         : null;
     physicalAppearance = json['physicalAppearance'].cast<String>();
     psychologicalState = json['psychologicalState'].cast<String>();
+    reporterId = json['reporter'];
+    createdAt = (json['createdAt'] as Timestamp)?.toDate();
   }
 
   factory HomelessManifest.fromSnapshot(QueryDocumentSnapshot snapshot) {
@@ -95,13 +97,14 @@ class HomelessManifest {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['uid'] = this.id;
     data['globalNeeds'] = this.globalNeeds;
     if (this.familyRegistry != null) {
       data['familyRegistry'] = this.familyRegistry.toJson();
     }
     data['physicalAppearance'] = this.physicalAppearance;
     data['psychologicalState'] = this.psychologicalState;
+    data['reporter'] = this.reporterId;
+    data['createdAt'] = this.createdAt;
     return data;
   }
 
@@ -109,6 +112,8 @@ class HomelessManifest {
   String toString() {
     return JsonEncoder.withIndent("     ").convert(toJson());
   }
+
+  bool get male => familyRegistry.gender == 'Male';
 }
 
 class FamilyRegistry {
@@ -116,6 +121,8 @@ class FamilyRegistry {
   String lifeStage;
   bool married;
   int nbrChildren;
+
+  bool get hasChildren => nbrChildren > 0;
 
   FamilyRegistry({this.gender, this.lifeStage, this.married, this.nbrChildren});
 
