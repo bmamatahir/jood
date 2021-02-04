@@ -18,7 +18,7 @@ class ListMapSwitcher extends StatelessWidget {
   buildButton(context) {
     return (Switcher s) {
       bool _selected = value == s;
-      Color bgc = _selected ? Colors.blue : Colors.transparent;
+      Color bgc = _selected ? kPrimaryColor : Colors.transparent;
       Color fgc = _selected ? Colors.white : kTextColor;
 
       return InkWell(

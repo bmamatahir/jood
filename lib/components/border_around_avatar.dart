@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jood/constants.dart';
 
 class BorderAroundAvatar extends StatelessWidget {
   final Widget child;
@@ -12,7 +13,7 @@ class BorderAroundAvatar extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(
-          color: Colors.blue,
+          color: kPrimaryColor,
           width: 1,
         ),
       ),

@@ -5,6 +5,25 @@ import 'package:faker/faker.dart';
 import 'package:jood/helper/helpers.dart';
 import 'package:jood/models/profile.dart';
 
+class LatLong {
+  double latitude;
+  double longitude;
+
+  LatLong(this.latitude, this.longitude);
+
+  LatLong.fromJson(Map<String, dynamic> json) {
+    latitude = json['latitude'];
+    longitude = json['longitude'];
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'latitude': latitude,
+      'longitude': longitude,
+    };
+  }
+}
+
 class HomelessManifest {
   static const List<String> GENDERS = ["Male", "Female"];
   static const List<String> LIFE_STAGES = ["Child", "Adolescence", "Adult", "OldAge"];
@@ -43,6 +62,10 @@ class HomelessManifest {
   String reporterId;
   DateTime createdAt;
   Profile reporter;
+  String mapScreenshot;
+  String comment;
+  LatLong gpsCoordinates;
+  String address;
 
   String get timeAgo => createdAt != null ? Helpers.formatTimeAgo(createdAt) : null;
 
@@ -67,6 +90,8 @@ class HomelessManifest {
     physicalAppearance = _randomElements(PHYSICAL_APPEARANCE);
     psychologicalState = _randomElements(PSYCHOLOGICAL_STATE);
     reporterId = _faker.randomGenerator.string(50, min: 25);
+    mapScreenshot = "${_faker.guid.guid()}.jpg";
+    comment = _faker.lorem.sentence();
   }
 
   HomelessManifest(
@@ -83,17 +108,16 @@ class HomelessManifest {
     physicalAppearance = json['physicalAppearance'].cast<String>();
     psychologicalState = json['psychologicalState'].cast<String>();
     reporterId = json['reporter'];
+    mapScreenshot = json['mapScreenshot'];
+    comment = json['comment'];
+    gpsCoordinates = LatLong.fromJson(Map.from(json['gpsCoordinates']));
+    address = json['address'];
     createdAt = (json['createdAt'] as Timestamp)?.toDate();
   }
 
   factory HomelessManifest.fromSnapshot(QueryDocumentSnapshot snapshot) {
     return HomelessManifest.fromJson(snapshot.data())..id = snapshot.id;
   }
-
-  /*  {
-    var data = snapshot.data();
-    id = snapshot.id;
-  }*/
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
@@ -105,6 +129,10 @@ class HomelessManifest {
     data['psychologicalState'] = this.psychologicalState;
     data['reporter'] = this.reporterId;
     data['createdAt'] = this.createdAt;
+    data['mapScreenshot'] = this.mapScreenshot;
+    data['comment'] = this.comment;
+    data['gpsCoordinates'] = this.gpsCoordinates.toJson();
+    data['address'] = this.address;
     return data;
   }
 
@@ -114,6 +142,12 @@ class HomelessManifest {
   }
 
   bool get male => familyRegistry.gender == 'Male';
+
+  bool get hasGlobalNeeds => globalNeeds.length > 0;
+
+  bool get hasPhysicalAppearance => physicalAppearance.length > 0;
+
+  bool get hasPsychologicalState => psychologicalState.length > 0;
 }
 
 class FamilyRegistry {

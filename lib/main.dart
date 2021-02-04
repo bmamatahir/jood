@@ -1,3 +1,4 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,8 @@ class MyApp extends StatelessWidget {
       theme: theme(),
       home: AuthenticationWrapper(),
       routes: routes,
+      builder: BotToastInit(), //1. call BotToastInit
+      navigatorObservers: [BotToastNavigatorObserver()], //2. registered route observer
     );
   }
 }
@@ -41,6 +44,7 @@ class AuthenticationWrapper extends ConsumerWidget {
 
         if (user != null) {
           return HomePage();
+          // return MapSample();
         }
         return LoginPage();
       },

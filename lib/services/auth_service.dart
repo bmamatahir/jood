@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:jood/models/profile.dart';
 import 'package:rxdart/rxdart.dart';
@@ -9,6 +10,7 @@ class AuthenticationService {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final PublishSubject loading = PublishSubject();
+  FirebaseStorage storage = FirebaseStorage.instance;
 
   AuthenticationService() {
     user = _auth.idTokenChanges();

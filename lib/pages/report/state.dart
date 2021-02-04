@@ -1,6 +1,11 @@
+import 'dart:typed_data';
+
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:geocoder/geocoder.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:jood/helper/helpers.dart';
 import 'package:jood/models/homeless_manifest.dart';
-import 'package:jood/services/auth_service.dart';
 import 'package:jood/services/homeless_crud.dart';
 
 class FormState extends StateNotifier<Map<String, dynamic>> {
@@ -14,7 +19,14 @@ class FormState extends StateNotifier<Map<String, dynamic>> {
             "nbrChildren": 0
           },
           "physicalAppearance": [],
-          "psychologicalState": []
+          "psychologicalState": [],
+          "mapScreenshot": null,
+          "comment": null,
+          "address": null,
+          "gpsCoordinates": {
+            "latitude": null,
+            "longitude": null,
+          }
         });
 
   String get gender => state['familyRegistry']['gender'];
@@ -37,18 +49,33 @@ class FormState extends StateNotifier<Map<String, dynamic>> {
     });
   }
 
+  setGPSCoordinates(double latitude, double longitude) async {
+    Address address =
+        (await Geocoder.local.findAddressesFromCoordinates(Coordinates(latitude, longitude))).first;
+
+    setState({
+      'gpsCoordinates': {...state['gpsCoordinates'], 'latitude': latitude, 'longitude': longitude},
+      'address': address.addressLine
+    });
+  }
+
   setMarried(bool married) {
     setState({
       'familyRegistry': {...state['familyRegistry'], 'married': married}
     });
   }
 
+  setComment(String comment) {
+    setState({'comment': comment.length == 0 ? null : comment});
+  }
+
+  setAddress(String address) {
+    setState({'address': address});
+  }
+
   setNumberOfChildren(String nbrChildren) {
     setState({
-      'familyRegistry': {
-        ...state['familyRegistry'],
-        'nbrChildren': int.tryParse(nbrChildren) ?? 0
-      }
+      'familyRegistry': {...state['familyRegistry'], 'nbrChildren': int.tryParse(nbrChildren) ?? 0}
     });
   }
 
@@ -92,11 +119,60 @@ class FormState extends StateNotifier<Map<String, dynamic>> {
 
   bool selectedPsycho(value) => state['psychologicalState'].contains(value);
 
-  void submit([void cb()]) {
-    var entity = HomelessManifest.fromJson(state);
+  setMapScreenshotData(Uint8List data) {
+    if (data != null) setState({'mapScreenshot': data});
+  }
+
+  evaluate() {
+    nullable(v) => v == null;
+
+    if (nullable(state['mapScreenshot'])) {
+      throw "Map preview is not available";
+    }
+
+    if (state['globalNeeds'].isEmpty &&
+        state['physicalAppearance'].isEmpty &&
+        state['psychologicalState'].isEmpty) {
+      throw "At lease provide some data";
+    }
+  }
+
+  void submit(void cb(), {Function(String message) error}) async {
+    // print('>>> ${state['address']} ${state['gpsCoordinates']}');
+    try {
+      evaluate();
+      // print(">>> ${state['mapScreenshot'].toString()}");
+    } catch (e) {
+      error(e);
+      return;
+    }
+
+    final ref = await upload(state['mapScreenshot']);
+    var entity = HomelessManifest.fromJson({...state, "mapScreenshot": ref.name});
     Database().setHomeless(entity);
     reset();
     if (cb != null) cb();
+  }
+
+  snapshotNameGenerator() {
+    return "/IMG_${DateFormat('yyyyMMddHm').format(DateTime.now())}_${Helpers.getRandomString(7)}.jpg";
+  }
+
+  Future<Reference> upload(Uint8List fileBytes) async {
+    Reference ref = FirebaseStorage.instance.ref('map_screenshots/${snapshotNameGenerator()}');
+
+    try {
+      await ref.putData(fileBytes);
+    } on FirebaseException catch (e) {
+      // e.g, e.code == 'canceled'
+      print(">>> $e");
+    }
+
+    print('''
+    name: ${ref.name}
+    fullPath: ${ref.fullPath}
+    ''');
+    return ref;
   }
 
   reset() {

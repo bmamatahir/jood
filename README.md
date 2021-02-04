@@ -16,3 +16,6 @@ Notre devoir de conscience
 - Using Keytool
 
 `keytool -list -v -alias androiddebugkey -keystore %USERPROFILE%\.android\debug.keystore`
+
+### Google cloud API key
+- AIzaSyAZA9tv74s8P3xh47ggXk9DeidHS3mbni8

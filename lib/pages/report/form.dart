@@ -1,17 +1,20 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart' hide FormState;
+import 'package:flutter/services.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:jood/models/homeless_manifest.dart';
+import 'package:jood/pages/report/form_group_header.dart';
 import 'package:jood/pages/report/state.dart';
 
 class ReportForm extends StatelessWidget {
   sectionHeader(String text) {
-    return [
-      Text(text,
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
-      Divider(),
-      SizedBox(height: 8),
-    ];
+    return FormGroupHeader(text);
   }
+
+  GoogleMapController _mapController;
+  Uint8List _imageBytes;
 
   globalRequirements(FormState state) {
     return Wrap(
@@ -24,9 +27,7 @@ class ReportForm extends StatelessWidget {
                 ),
                 label: Text(need,
                     style: TextStyle(
-                        color: state.selectedGlobalNeed(need)
-                            ? Colors.white
-                            : Colors.black)),
+                        color: state.selectedGlobalNeed(need) ? Colors.white : Colors.black)),
                 selected: state.selectedGlobalNeed(need),
                 selectedColor: Colors.blue.shade600,
                 onSelected: (bool selected) {
@@ -78,8 +79,7 @@ class ReportForm extends StatelessWidget {
         title: Text("Married"),
         value: state.married,
         onChanged: state.setMarried,
-        controlAffinity:
-            ListTileControlAffinity.leading, //  <-- leading Checkbox
+        controlAffinity: ListTileControlAffinity.leading, //  <-- leading Checkbox
       ),
       if (state.married)
         TextField(
@@ -101,15 +101,13 @@ class ReportForm extends StatelessWidget {
       spacing: 20,
       children: HomelessManifest.PHYSICAL_APPEARANCE
           .map((e) => InputChip(
-                padding: EdgeInsets.all(5),
+        padding: EdgeInsets.all(5),
                 avatar: CircleAvatar(
                   child: Text(e[0]),
                 ),
                 label: Text(e,
                     style: TextStyle(
-                        color: state.selectedAppearance(e)
-                            ? Colors.white
-                            : Colors.black)),
+                        color: state.selectedAppearance(e) ? Colors.white : Colors.black)),
                 selected: state.selectedAppearance(e),
                 selectedColor: Colors.blue.shade600,
                 onSelected: (bool selected) {
@@ -130,15 +128,12 @@ class ReportForm extends StatelessWidget {
       spacing: 20,
       children: HomelessManifest.PSYCHOLOGICAL_STATE
           .map((e) => InputChip(
-                padding: EdgeInsets.all(5),
+        padding: EdgeInsets.all(5),
                 avatar: CircleAvatar(
                   child: Text(e[0]),
                 ),
                 label: Text(e,
-                    style: TextStyle(
-                        color: state.selectedPsycho(e)
-                            ? Colors.white
-                            : Colors.black)),
+                    style: TextStyle(color: state.selectedPsycho(e) ? Colors.white : Colors.black)),
                 selected: state.selectedPsycho(e),
                 selectedColor: Colors.blue.shade600,
                 onSelected: (bool selected) {
@@ -154,6 +149,20 @@ class ReportForm extends StatelessWidget {
     );
   }
 
+  commentArea(FormState state) {
+    return TextField(
+      maxLength: 250,
+      maxLines: 3,
+      keyboardType: TextInputType.number,
+      buildCounter: (BuildContext context, {int currentLength, int maxLength, bool isFocused}) =>
+          null,
+      decoration:
+          InputDecoration(border: InputBorder.none, filled: true, hintText: 'Wraite something...'),
+      onChanged: state.setComment,
+      onSubmitted: state.setComment,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var formState = context.read(formStateProvider);
@@ -161,17 +170,19 @@ class ReportForm extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ...sectionHeader("SDF requirements"),
+        sectionHeader("SDF requirements"),
         globalRequirements(formState),
         SizedBox(height: 20),
-        ...sectionHeader("Family Registry"),
+        sectionHeader("Family Registry"),
         ...registryFamily(formState),
         SizedBox(height: 20),
-        ...sectionHeader("Physical Appearance"),
+        sectionHeader("Physical Appearance"),
         physicalAppearanceChooser(formState),
         SizedBox(height: 20),
-        ...sectionHeader("Psychological State"),
+        sectionHeader("Psychological State"),
         psychologicalStateChooser(formState),
+        sectionHeader("Leave a comment"),
+        commentArea(formState),
         SizedBox(height: 20),
       ],
     );

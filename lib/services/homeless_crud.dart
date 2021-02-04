@@ -34,21 +34,32 @@ class Database {
     return _homelessRef.doc(id).delete();
   }
 
-  //
-  // Stream<List<HomelessManifest>> homelessManifestsStream() {
-  //   return _ref.snapshots().map(
-  //       (e) => e.docs.map((e) => HomelessManifest.fromSnapshot(e)).toList());
-  // }
-
   Stream<List<HomelessManifest>> homelessManifestsStream() {
     var s = _homelessRef.snapshots().switchMap((e) {
       List<HomelessManifest> $r = e.docs.map((e) => HomelessManifest.fromSnapshot(e)).toList();
 
-      var getHomeless = (String id) => $r.firstWhere((h) => h.reporterId == id, orElse: null);
-      var usersHasSignals = () => [...$r].map((e) => e.reporterId).toList().cast<String>();
+      List<HomelessManifest> getHomelessSignals(String id) =>
+          $r.where((h) => h.reporterId == id).toList();
 
-      return _usersRef.where('uid', whereIn: usersHasSignals()).get().asStream().map((qs) =>
-          qs.docs.map((p) => getHomeless(p.id)..reporter = Profile.fromSnapshot(p)).toList());
+      List<HomelessManifest> attachReporterToManifest(Profile p) {
+        return getHomelessSignals(p.uid).map((h) => h..reporter = p).toList();
+      }
+
+      //? smart way to remove duplication trick list->set(map)->list
+      var usersHasSignals = () => [
+            ...{
+              ...[...$r].map((e) => e.reporterId).toList().cast<String>()
+            }
+          ];
+
+      return _usersRef.where('uid', whereIn: usersHasSignals()).get().asStream().switchMap((qs) {
+        var r = qs.docs
+            .map((p) => attachReporterToManifest(Profile.fromSnapshot(p)))
+            .expand((i) => i)
+            .toList();
+
+        return Stream.value(r);
+      });
     });
     return s;
   }
