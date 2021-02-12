@@ -4,9 +4,11 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:jood/components/border_around_avatar.dart';
 import 'package:jood/constants.dart';
 import 'package:jood/models/homeless_manifest.dart';
+import 'package:marquee/marquee.dart';
 
 class HomelessCardItem extends HookWidget {
   final HomelessManifest homeless;
@@ -35,15 +37,16 @@ class HomelessCardItem extends HookWidget {
   header() {
     return ListTile(
       contentPadding: const EdgeInsets.only(left: 10),
-      title: Text.rich(TextSpan(children: [
-        TextSpan(text: homeless.reporter.displayName),
-        TextSpan(
-            text: " - ${homeless.timeAgo}",
-            style: TextStyle(color: kPrimaryColor, fontSize: 12, fontWeight: FontWeight.w600)),
-      ])),
-      subtitle: Text(
-        homeless.address,
-        softWrap: false,
+      title: Text(homeless.reporter.displayName),
+      subtitle: SizedBox(
+        height: 20,
+        child: Marquee(
+          text: homeless.address,
+          blankSpace: 20.0,
+          velocity: 10.0,
+          pauseAfterRound: Duration(seconds: 3),
+          startAfter: Duration(seconds: 2),
+        ),
       ),
       leading: BorderAroundAvatar(
         child: CircleAvatar(
@@ -145,8 +148,32 @@ class HomelessCardItem extends HookWidget {
                 );
               }),
 
+          // date time and reaction buttons
           Padding(
-            padding: const EdgeInsets.all(15),
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(DateFormat.yMMMEd().add_jm().format(homeless.createdAt),
+                    style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.w600)),
+                Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.share_rounded, color: kTextColor),
+                      onPressed: () {},
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.comment, color: kTextColor),
+                      onPressed: () {},
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          // More info
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15).copyWith(bottom: 10),
             child: ExpandablePanel(
               headerAlignment: ExpandablePanelHeaderAlignment.center,
               header: Text(
