@@ -35,7 +35,7 @@ class Database {
   }
 
   Stream<List<HomelessManifest>> homelessManifestsStream() {
-    var s = _homelessRef.snapshots().switchMap((e) {
+    Stream<List<HomelessManifest>> s = _homelessRef.snapshots().switchMap((e) {
       List<HomelessManifest> $r = e.docs.map((e) => HomelessManifest.fromSnapshot(e)).toList();
 
       List<HomelessManifest> getHomelessSignals(String id) =>
@@ -61,6 +61,7 @@ class Database {
         return Stream.value(r);
       });
     });
+
     return s;
   }
 

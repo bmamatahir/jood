@@ -39,15 +39,16 @@ dependencies:
   flutter_svg:
   timeago: ^2.0.29
   intl: ^0.16.1
-  google_maps_flutter: ^1.1.1
+  google_maps_flutter: ^1.2.0
   permission_handler: ^5.0.1+1
-  geolocator: ^6.1.14
+  geolocator: ^6.2.0
   bot_toast: ^3.0.5
   flutter_cache_manager: ^2.1.1
   cached_network_image: ^2.5.0
   geocoder: ^0.2.1
   expandable: ^4.1.4
   marquee: ^1.6.1
+  bottom_sheet: ^0.0.1-dev.7
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

@@ -12,8 +12,13 @@ import 'package:marquee/marquee.dart';
 
 class HomelessCardItem extends HookWidget {
   final HomelessManifest homeless;
+  final bool showShadow;
+  final bool initialExpanded;
 
-  HomelessCardItem({Key key, this.homeless}) : super(key: key);
+  HomelessCardItem({Key key, this.homeless, this.showShadow = true, this.initialExpanded = false})
+      : super(key: key) {
+    controller = ExpandableController(initialExpanded: initialExpanded);
+  }
 
   smallHeader(String text) {
     return Row(
@@ -124,10 +129,16 @@ class HomelessCardItem extends HookWidget {
 
   String _downloadUrl;
 
+  ExpandableController controller;
+
   @override
   Widget build(BuildContext context) {
+    useEffect(() {
+      return () => controller.dispose();
+    }, []);
+
     return Card(
-      elevation: 2,
+      elevation: showShadow ? 2 : 0,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -175,6 +186,7 @@ class HomelessCardItem extends HookWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15).copyWith(bottom: 10),
             child: ExpandablePanel(
+              controller: controller,
               headerAlignment: ExpandablePanelHeaderAlignment.center,
               header: Text(
                 "Requirements",

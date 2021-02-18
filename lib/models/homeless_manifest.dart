@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:faker/faker.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jood/helper/helpers.dart';
 import 'package:jood/models/profile.dart';
 
@@ -21,6 +22,13 @@ class LatLong {
       'latitude': latitude,
       'longitude': longitude,
     };
+  }
+
+  Marker toGoogleMarker([String id]) {
+    return Marker(
+      markerId: MarkerId(id ?? Helpers.getRandomString(5)),
+      position: LatLng(longitude, latitude),
+    );
   }
 }
 
@@ -95,10 +103,7 @@ class HomelessManifest {
   }
 
   HomelessManifest(
-      {this.globalNeeds,
-      this.familyRegistry,
-      this.physicalAppearance,
-      this.psychologicalState});
+      {this.globalNeeds, this.familyRegistry, this.physicalAppearance, this.psychologicalState});
 
   HomelessManifest.fromJson(Map<String, dynamic> json) {
     globalNeeds = json['globalNeeds'].cast<String>();
