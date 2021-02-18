@@ -56,6 +56,7 @@ class HomelessCardItem extends HookWidget {
       leading: BorderAroundAvatar(
         child: CircleAvatar(
           backgroundImage: NetworkImage(homeless.reporter.safePhotoUrl),
+          backgroundColor: Colors.white,
         ),
       ),
       trailing: PopupMenuButton(
@@ -219,6 +220,10 @@ class HomelessCardItem extends HookWidget {
                       spacing: 9,
                       children: homeless.psychologicalState.map((e) => propertyViewer(e)).toList(),
                     ),
+                  ],
+                  if (homeless.comment != null) ...[
+                    smallHeader("Comment"),
+                    Text(homeless.comment),
                   ],
                 ],
               ),

@@ -25,6 +25,7 @@ class _DropDownAvatarState extends State<DropDownAvatar> {
                   child: CircleAvatar(
                     minRadius: 20,
                     backgroundImage: NetworkImage(p.safePhotoUrl),
+                    backgroundColor: Colors.white,
                   ),
                 ),
                 onSelected: (v) {

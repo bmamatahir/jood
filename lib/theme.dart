@@ -17,6 +17,7 @@ ThemeData theme() {
       elevation: 2,
     ),
     visualDensity: VisualDensity.adaptivePlatformDensity,
+
   );
 }
 

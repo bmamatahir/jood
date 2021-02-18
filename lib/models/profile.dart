@@ -14,15 +14,14 @@ class Profile {
     return a;
   }
 
-  static const _default_photo_url =
-      "https://i4.sndcdn.com/avatars-xg1fZv1ULo6Rzun2-3fX8MQ-t500x500.jpg";
-
   Profile.none() {
     this.displayName = "Anonymouse user";
-    this.photoURL = _default_photo_url;
+    this.photoURL = _getSafeUrl;
   }
 
-  String get safePhotoUrl  => photoURL ?? _default_photo_url;
+  String get _getSafeUrl => "http://identicon-1132.appspot.com/${uid}";
+
+  String get safePhotoUrl => photoURL ?? _getSafeUrl;
 
   Profile.fromJson(Map<String, dynamic> json) {
     uid = json['uid'];

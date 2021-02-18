@@ -150,7 +150,6 @@ class MapSampleState extends State<MapSample> with DisposableWidget {
       mapToolbarEnabled: false,
       minMaxZoomPreference: MinMaxZoomPreference(6.3523268699646, 18.3396053314209),
       myLocationEnabled: true,
-      myLocationButtonEnabled: true,
       // onTap: (dd) => addMarkers(),
       // onTap: (dd) => _add(),
       zoomControlsEnabled: false,
