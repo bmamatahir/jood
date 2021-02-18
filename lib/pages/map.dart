@@ -128,7 +128,7 @@ class MapSampleState extends State<MapSample> with DisposableWidget {
         final Marker marker = Marker(
           markerId: markerId,
           position: LatLng(e.gpsCoordinates.latitude, e.gpsCoordinates.longitude),
-          infoWindow: InfoWindow(title: e.address, snippet: e.toJson().toString()),
+          infoWindow: InfoWindow(title: "Requirements", snippet: e.shortDescription()),
           onTap: () {
             _onMarkerTapped(markerId, e);
           },

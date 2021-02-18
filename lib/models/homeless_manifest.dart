@@ -146,6 +146,10 @@ class HomelessManifest {
     return JsonEncoder.withIndent("     ").convert(toJson());
   }
 
+  String shortDescription() {
+    return !hasGlobalNeeds ? "" : globalNeeds.join(", ");
+  }
+
   bool get male => familyRegistry.gender == 'Male';
 
   bool get hasGlobalNeeds => globalNeeds.length > 0;
