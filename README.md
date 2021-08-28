@@ -8,8 +8,8 @@
 The app users can signal a homeless and identify their locations, then the app notifies their volunteers and provides them with a detailed report about homeless needs. 
 Briefly, the app act as a bridge between the homeless and volunteers.
 
-## Screenshots
-COMING SOON
+## Quick toor
+![Demo](assets/demo.gif)
 
 ## Technical guidelines
 
