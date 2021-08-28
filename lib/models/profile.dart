@@ -19,7 +19,7 @@ class Profile {
     this.photoURL = _getSafeUrl;
   }
 
-  String get _getSafeUrl => "http://identicon-1132.appspot.com/${uid}";
+  String get _getSafeUrl => "https://api.kwelo.com/v1/media/identicon/${uid}";
 
   String get safePhotoUrl => photoURL ?? _getSafeUrl;
 

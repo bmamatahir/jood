@@ -1,21 +1,26 @@
-# jood
+<p align="center">
+    <img alt="Jood Logo" src="https://raw.githubusercontent.com/bmamatahir/jood/master/assets/logo.png" width="200" />
+</p>
+<h1 align="center">
+  Jood
+</h1>
 
-Notre devoir de conscience
+The app users can signal a homeless and identify their locations, then the app notifies their volunteers and provides them with a detailed report about homeless needs. 
+Briefly, the app act as a bridge between the homeless and volunteers.
 
-### app icon
-`flutter pub run flutter_launcher_icons:main`
+## Screenshots
+COMING SOON
 
-### build apk
-`flutter build apk --release`
+## Technical guidelines
 
-### the SHA-1 of your signing certificate
-- Using Gradle's Signing Report
+     Generate the app lunch icon `flutter pub run flutter_launcher_icons:main`
 
-`./gradlew signingReport`
+     Build release apk `flutter build apk --release`
 
-- Using Keytool
+     The SHA-1 of your signing certificate
+    - Using Gradle's Signing Report `./gradlew signingReport`
+    
+    - Using Keytool `keytool -list -v -alias androiddebugkey -keystore %USERPROFILE%\.android\debug.keystore`
 
-`keytool -list -v -alias androiddebugkey -keystore %USERPROFILE%\.android\debug.keystore`
-
-### Google cloud API key
-- AIzaSyAZA9tv74s8P3xh47ggXk9DeidHS3mbni8
+     Google Maps API key (gently use your own 😊) 
+     - AIzaSyCl2Hdpenhy2OOf_FjURE5cDbPdCxFzCHQ

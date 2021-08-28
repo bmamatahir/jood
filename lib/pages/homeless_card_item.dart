@@ -15,7 +15,11 @@ class HomelessCardItem extends HookWidget {
   final bool showShadow;
   final bool initialExpanded;
 
-  HomelessCardItem({Key key, this.homeless, this.showShadow = true, this.initialExpanded = false})
+  HomelessCardItem(
+      {Key key,
+      this.homeless,
+      this.showShadow = true,
+      this.initialExpanded = false})
       : super(key: key) {
     controller = ExpandableController(initialExpanded: initialExpanded);
   }
@@ -93,7 +97,10 @@ class HomelessCardItem extends HookWidget {
             children: [
               Text(
                 property,
-                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, height: 1),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    height: 1),
               ),
               value,
             ],
@@ -105,7 +112,8 @@ class HomelessCardItem extends HookWidget {
 
   statistics() {
     return Table(
-        border: TableBorder.all(color: Colors.black12, style: BorderStyle.solid, width: 1),
+        border: TableBorder.all(
+            color: Colors.black12, style: BorderStyle.solid, width: 1),
         children: [
           TableRow(children: [
             tableCellWrapper(
@@ -118,7 +126,8 @@ class HomelessCardItem extends HookWidget {
             tableCellWrapper('Life stage', 'assets/icons/lifestage.svg',
                 Text(homeless.familyRegistry.lifeStage)),
           ]),
-          if (homeless.familyRegistry.married || homeless.familyRegistry.hasChildren)
+          if (homeless.familyRegistry.married ||
+              homeless.familyRegistry.hasChildren)
             TableRow(children: [
               tableCellWrapper('Married', 'assets/icons/married.svg',
                   Text(homeless.familyRegistry.married ? 'Yes' : 'No')),
@@ -155,7 +164,9 @@ class HomelessCardItem extends HookWidget {
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 _downloadUrl = snapshot.data;
                 return CachedNetworkImage(
-                  imageUrl: snapshot.hasData ? _downloadUrl : "http://via.placeholder.com/414x200",
+                  imageUrl: snapshot.hasData
+                      ? _downloadUrl
+                      : "https://via.placeholder.com/414x200/FFFFFF/808080?text=Map+Preview",
                   errorWidget: (context, url, error) => Icon(Icons.error),
                 );
               }),
@@ -167,7 +178,8 @@ class HomelessCardItem extends HookWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(DateFormat.yMMMEd().add_jm().format(homeless.createdAt),
-                    style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.w600)),
+                    style: TextStyle(
+                        color: kPrimaryColor, fontWeight: FontWeight.w600)),
                 Row(
                   children: [
                     IconButton(
@@ -185,7 +197,8 @@ class HomelessCardItem extends HookWidget {
           ),
           // More info
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15).copyWith(bottom: 10),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 15).copyWith(bottom: 10),
             child: ExpandablePanel(
               controller: controller,
               headerAlignment: ExpandablePanelHeaderAlignment.center,
@@ -202,7 +215,9 @@ class HomelessCardItem extends HookWidget {
                     Wrap(
                       runSpacing: 9,
                       spacing: 9,
-                      children: homeless.globalNeeds.map((e) => propertyViewer(e)).toList(),
+                      children: homeless.globalNeeds
+                          .map((e) => propertyViewer(e))
+                          .toList(),
                     ),
                   ],
                   if (homeless.hasPhysicalAppearance) ...[
@@ -210,7 +225,9 @@ class HomelessCardItem extends HookWidget {
                     Wrap(
                       runSpacing: 9,
                       spacing: 9,
-                      children: homeless.physicalAppearance.map((e) => propertyViewer(e)).toList(),
+                      children: homeless.physicalAppearance
+                          .map((e) => propertyViewer(e))
+                          .toList(),
                     ),
                   ],
                   if (homeless.hasPsychologicalState) ...[
@@ -218,7 +235,9 @@ class HomelessCardItem extends HookWidget {
                     Wrap(
                       runSpacing: 9,
                       spacing: 9,
-                      children: homeless.psychologicalState.map((e) => propertyViewer(e)).toList(),
+                      children: homeless.psychologicalState
+                          .map((e) => propertyViewer(e))
+                          .toList(),
                     ),
                   ],
                   if (homeless.comment != null) ...[
